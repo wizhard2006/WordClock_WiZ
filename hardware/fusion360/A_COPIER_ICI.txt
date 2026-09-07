@@ -1,0 +1,10 @@
+Copier ici :
+  Word Clock French Mini upgrade grille v9.f3z   (48,5 Mo)
+
+Le fichier "v8" de l'archive de travail est un doublon exact du v9
+(meme MD5 691a7e4c05ad3040ddc0a4416d533a69) : ne pas le versionner.
+
+Penser a exporter aussi les STL dans hardware/stl/ : c'est ce dont ont besoin
+les gens qui veulent seulement imprimer la lettrine.
+
+Supprimer ce fichier une fois le .f3z copie.

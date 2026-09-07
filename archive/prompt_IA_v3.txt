@@ -1,0 +1,148 @@
+Je veux que tu me crées un programme dans le bon langage informatique pour être ensuite intégré dans un microcontrôleur de type ESP8266.
+Ce code sera compatible avec l'utilisation du logiciel Arduino IDE pour permettre sa compilation et son téléversement dans la carte ESP8266.
+Le but de ce programme sera de faire fonctionner une "Word clock", c’est-à-dire une horloge qui affiche des mots plutôt que des chiffres, les lettres des mots s'illuminant par des Led.
+La mise à jour de l'heure devra se faire automatiquement via un serveur NTP, dont l'URL sera paramétrable.
+Prévoir dans le code la gestion des changements d'heure été/hiver (France).
+La LED intégrée a la carte s'allumera selon les statuts suivants:
+- clignotement lent --> recherche de la connexion wifi
+- clignotement rapide --> erreur ou mode AP (en absence de connexion wifi)
+- fixe --> succès connexion wifi établie.
+
+
+
+je veux que l'esp8266 soit accessible via une page web intégré (WebUI) permettant de:
+- paramétrer la connexion au wifi (SSID + Mot de passe),
+- changer l'url du serveur NTP,
+- afficher l'heure
+- afficher le RSSI du wifi,
+- régler la puissance lumineuse des LED,
+- modifier la couleur de l'affichage des heures,
+- modifier la couleur de l'affichage des minutes.
+- modifier la couleur de l'affichage du groupe de 4 led (AM/PM)
+- modifier la couleur de l'affichage "timebywiz"
+- Indiquer et permettre la modification de PIN (GPIO) choisit pour piloter les Led
+- Permettre d'éteindre la led intégrée à la carte
+- permettre un reset usine
+- le redémarrage (reboot)
+- Affichage de l'adresse MAC
+
+Toutes les configurations doivent être persistante (EEPROM)
+
+La mise en lumière de chaque lettre composant les mots se fera par une bande LED de 104 leds disposées en 8 lignes de 13 leds chacune.
+
+Ci-dessous les numéros de LED à allumer en fonction de l'heure
+0	33;34;35;36;37;38	
+1	0;1;2;52;53;54;55;56
+2	5;6;7;8;52;53;54;55;56;57
+3	26;27;28;29;30;52;53;54;55;56;57
+4	17;18;19;20;21;22;52;53;54;55;56;57
+5	22;23;24;25;52;53;54;55;56;57
+6	30;31;32;52;53;54;55;56;57
+7	9;10;11;12;52;53;54;55;56;57
+8	13;14;15;16;52;53;54;55;56;57
+9	1;2;3;4;52;53;54;55;56;57
+10	43;44;45;52;53;54;55;56;57
+11	48;49;50;51;52;53;54;55;56;57
+12	44;45;46;47	
+
+et en fonction des minutes:
+5	65;66;67;68
+10	78;79;80
+15	75;76;81;82;83;84;85
+20	70;71;72;73;74
+25	65;66;67;68;69;70;71;72;73;74
+30	75;76;86;87;88;89
+35	59;60;61;62;63;65;66;67;68;69;70;71;72;73;74
+40	59;60;61;62;63;70;71;72;73;74
+45	59;60;61;62;63;76;77;81;82;83;84;85
+50	59;60;61;62;63;78;79;80
+55	59;60;61;62;63;65;66;67;68
+
+- Au démarrage de la carte ESP8266, lance une séquence de test de toutes les leds avec une animation arc en ciel, pendant au moins 5 secondes.
+- Les Leds n'indiquant pas les heures, minutes, ou autres, doivent par la suite restées éteintes (noires)
+- L'affichage doit se mettre à jour toutes les minutes
+
+- Le type de la bande LED est une WS2812B.
+- Je veux que les LED des heures soient allumées en rouge.
+- Allumer également les leds 95;96;97;98;99;100;101;102;103 uniquement à 21h00 et pendant 1 minute. (commentaire de la commande dans le code "TIMEBYWIZ ").
+
+- En plus de l'allumage des leds exprimé ci-dessus, Lorsque la plage horaire est le matin, allumer les leds 93;94 et lorsque la plage horaire est l'après midi, allumer les led 91;92;93;94 (commentaire des commandes dans le code "AM/PM")
+
+Le code doit être complet puisque je ne sais pas coder.
+Si j'ai oublié quelque chose pour la réalisation de tout cela, garde en mémoire les demande ci-dessous et pose moi des questions supplémentaires
+
+Propose moi un résumé synthétique pour verifier ta compréhension de ma demande avant de coder
+
+Enfin, je veux que tu me créés un manuel complet d'explication pas à pas de chaque étape à réaliser depuis l'intégration du programme que tu auras écrit dans Arduino IDE, tous les paramétrages à réaliser, notamment la liste des bibliothèques à utiliser et où les trouver pour les intégrer dans arduino IDE, jusqu’à la liste de matériel à utiliser pour réaliser ce projet, le schéma de raccordement des tous les fils aux GPIO.
+Le code doit être complet puisque je ne sais pas coder.
+Si j'ai oublié quelque chose pour la réalisation de tout cela, garde en mémoire les demande ci-dessous et pose moi des questions supplémentaires
+
+REPONSE DE L'IA GITHUB COPILOT:
+Résumé de ta demande
+Matériel
+ESP8266 type D1 mini, programmable via Arduino IDE.
+Bande WS2812B de 104 LEDs, disposées en 8 lignes de 13 LEDs (indexées de 0 à 103).
+Fonctions principales
+Horloge à mots :
+Les mots sont affichés via l’allumage de LEDs spécifiques selon l’heure/minute (mapping fourni).
+
+Synchronisation automatique de l’heure par NTP
+
+Serveur NTP paramétrable via WebUI.
+Prise en charge du changement heure été/hiver (France).
+Diagnostic LED intégrée :
+
+Clignotement lent : recherche WiFi.
+Clignotement rapide : erreur ou mode AP.
+Fixe : WiFi connecté.
+Effet au démarrage :
+
+Toutes les LEDs s’allument quelques secondes pour vérifier leur fonctionnement.
+Puis, elles s’éteignent (sauf celles nécessaires pour l’affichage horaire).
+Affichage :
+
+Les LED d’heures sont allumées en rouge.
+Les LED minutes selon mapping fourni.
+Leds 95–103 (“TIMEBYWIZ”) : à 21h00, pendant 1 minute uniquement.
+AM/PM :
+Matin : LEDs 93, 94 allumées.
+Après-midi : LEDs 91, 92, 93, 94 allumées.
+WebUI complète (page web embarquée) permettant :
+
+Configuration du WiFi (SSID, mot de passe)
+Configuration du serveur NTP
+Affichage de l’heure actuelle et du RSSI (signal WiFi)
+Réglage de la luminosité
+Modification des couleurs (heures, minutes, AM/PM, TIMEBYWIZ)
+Modification du PIN de contrôle des LEDs
+Activation/désactivation de la LED intégrée
+Reset usine (toutes les config remises à zéro)
+Redémarrage (reboot)
+Persistance :
+Toutes les configurations doivent être sauvegardées en EEPROM et restaurées au redémarrage.
+
+Rafraîchissement :
+L’affichage se met à jour toutes les minutes.
+
+LEDs non utilisées :
+Toujours éteintes (noir) hors test de démarrage.
+
+Questions complémentaires
+1. Couleur des minutes, AM/PM, TIMEBYWIZ :
+Tu veux pouvoir les choisir dans la WebUI, mais as-tu des couleurs par défaut en tête ? (Sinon, je propose bleu pour les minutes, vert pour AM/PM, violet pour TIMEBYWIZ par défaut : à modifier dans la config Web.)
+2. Mapping des minutes :
+Pour chaque valeur de minute (5, 10, ... 55), la liste fournie est la bonne ? (Si tu veux aussi l’exact mapping “par mots”, précise-le.)
+3. PIN LEDs :
+Par défaut : D2 (GPIO4), mais tu veux pouvoir le modifier via la WebUI.
+Attention : la modification du PIN ne prend effet qu’au reboot, c’est OK pour toi ?
+4. Sécurité WebUI :
+Veux-tu protéger la page Web par un mot de passe d’administration ? (Par défaut, ce n’est pas protégé.)
+5. Effets supplémentaires :
+Veux-tu des animations lors du changement d’heure/minute, ou un affichage statique suffit ?
+6. Langue WebUI :
+Tout en français comme tu l’as formulé ?
+Merci de valider ou compléter ces points.
+Dès validation, je te code le programme complet, prêt à être copié/collé dans l’Arduino IDE.
+
+mes réponses:
+1: Ok pour tes propositions, puisque je peux les modifier par la suite. 2: respect le mapping que je t'ai fournit, j'ai déjà identifié les LED a allumer en fonction des minutes. 3: D2 (GPIO4) Ok pour moi. 4: non pas de protection nécessaire. 5: affichage statique sera suffisant en revanche je veux bien une animation pour le test des LED au démarrage, si ce n'est pas trop gourmant en ressource pour un ESP8266. 6: peu importe français ou anglais, ce qui prend le moins de ressource pour la carte.

@@ -1,0 +1,20 @@
+# Artefacts de compilation Arduino
+build/
+*.elf
+*.map
+*.merged.bin
+*.bootloader.bin
+*.partitions.bin
+
+# Le binaire OTA n'est pas versionne : il est publie en asset de release
+*.ino.bin
+dist/
+
+# OS / editeurs
+Thumbs.db
+desktop.ini
+.DS_Store
+.vscode/
+
+# Secrets
+secrets.h
