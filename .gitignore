@@ -10,6 +10,13 @@ build/
 *.ino.bin
 dist/
 
+# Artefacts PyInstaller
+__pycache__/
+*.pyc
+build/
+*.exe
+*.lnk
+
 # OS / editeurs
 Thumbs.db
 desktop.ini

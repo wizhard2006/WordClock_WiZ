@@ -43,16 +43,19 @@ configuration → MAJOR.
 **2. Compiler**, puis *Croquis > Exporter les binaires compilés*. Le `.bin` sort
 dans le sous-dossier `build/` du croquis.
 
-**3. Fabriquer les fichiers de publication** :
+**3. Fabriquer les fichiers de publication.** Double-clic sur
+`ota_json_generator_v3.0.exe`, ou depuis le dépôt :
 
-```bash
-./tools/make_release_v1.0.sh 2.0.1 \
-    firmware/esp32/WordClock_ESP32/build/esp32.esp32.esp32/WordClock_ESP32.ino.bin
+```
+python tools/ota_json_generator_v3.0.py
 ```
 
-Le script calcule le MD5, renomme le binaire, écrit `latest.json` dans
-`dist/`, et refuse de tourner si la version demandée ne correspond pas à celle
-compilée dans le croquis.
+Il demande le `.bin`, retrouve tout seul la version compilée dans le croquis,
+calcule le MD5, renomme le binaire et écrit `latest.json` dans `dist/`.
+
+Si la version que tu annonces ne correspond pas à celle compilée, il s'arrête et
+te le dit : c'est l'erreur la plus courante, publier un binaire sous un numéro
+qui n'est pas le sien.
 
 **4. Taguer et publier** :
 

@@ -1,0 +1,2 @@
+executable permettant la création du JSON accompagnant le BIN pour les MaJ OTA a déposer sur le github (créé pour les wordclock sur ESP32)
+Dans l'éxécutable est intégré une mini aide (taper ? dans le programme a son début).

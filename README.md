@@ -104,7 +104,7 @@ Procédure de publication : [`docs/OTA.md`](docs/OTA.md).
 docs/       lettrine (référence), audit des bugs trouvés, procédure OTA
 firmware/   les deux croquis Arduino
 hardware/   modèle Fusion 360, STL, schéma de câblage
-tools/      fabrication d'une release OTA
+tools/      generateur du JSON OTA (script Python + recette PyInstaller)
 archive/    versions d'origine avant correction, non maintenues, jamais compilées
 ```
 

@@ -206,21 +206,23 @@ commit de fusion inutile.
 Le fichier apparaît dans un sous-dossier `build\` du croquis. Ce dossier est
 ignoré par Git, c'est voulu.
 
-**9b. Fabriquer les fichiers de publication.** Ouvre **Git Bash** (pas PowerShell,
-c'est un script shell), depuis `D:\Projets\WordClock_WiZ` :
+**9b. Fabriquer les fichiers de publication.** Double-clic sur
+`ota_json_generator_v3.0.exe`, ou dans PowerShell depuis `D:\Projets\WordClock_WiZ` :
 
-```bash
-./tools/make_release_v1.0.sh 2.0.1 \
-    firmware/esp32/WordClock_ESP32/build/esp32.esp32.esp32/WordClock_ESP32.ino.bin
+```powershell
+python tools\ota_json_generator_v3.0.py
 ```
 
-Il produit dans `dist/` :
+Il ouvre une fenêtre pour choisir le `.bin`, propose tout seul la version lue
+dans le croquis, calcule l'empreinte MD5, et écrit dans `dist\` :
 
 - `WordClock_ESP32_2.0.1.bin` — le firmware, renommé avec son numéro de version ;
 - `latest.json` — le fichier que l'horloge lit pour savoir s'il y a du neuf.
 
-Le script refuse de tourner si le numéro que tu lui donnes ne correspond pas à
-celui compilé dans le croquis. C'est volontaire : c'est l'erreur classique.
+Si le numéro que tu annonces ne correspond pas à celui compilé dans le croquis,
+il refuse et explique quoi faire. C'est volontaire : c'est l'erreur classique.
+
+Tape `?` au démarrage pour afficher la procédure complète.
 
 **9c. Créer la release.** Sur GitHub : onglet *Releases* puis *Draft a new release*.
 

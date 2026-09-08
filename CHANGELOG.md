@@ -12,6 +12,12 @@ Les deux firmwares évoluent séparément : l'ESP8266 n'a ni OTA ni mDNS.
   remise à zéro, adresse MAC. Aucun identifiant : l'horloge peut être offerte
   telle quelle. Le bloc HTML est identique dans les deux croquis, seules les
   constantes `WC_MEMO_*` en tête de fichier diffèrent.
+- **`tools/ota_json_generator_v3.0.py`** — successeur de l'outil de génération du
+  JSON OTA écrit pour les premières mises à jour. Même interface graphique, même
+  format de JSON, plus trois ajouts : la version annoncée est vérifiée contre
+  celle compilée dans le croquis, le binaire est renommé avec son numéro, et
+  l'URL GitHub Releases est construite automatiquement. La version d'origine est
+  conservée dans `archive/`.
 - **Numéro de version sur l'ESP8266** (`FIRMWARE_VERSION`, 18.1.0). Il n'y a pas
   d'OTA sur cette cible : il sert au mémo et au tag git correspondant.
 
