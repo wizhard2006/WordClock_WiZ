@@ -3,6 +3,27 @@
 Format [Keep a Changelog](https://keepachangelog.com/fr/1.1.0/), versionnage SemVer.
 Les deux firmwares évoluent séparément : l'ESP8266 n'a ni OTA ni mDNS.
 
+## Les deux firmwares — [ajouts communs]
+
+### Ajouté
+- **Mémo « Où retrouver ce projet » dans l'interface web.** Section dépliable en bas
+  de la page : URL du dépôt, chemin du croquis, carte à sélectionner dans l'IDE,
+  emplacement de la documentation de la lettrine, GPIO du ruban, procédure de
+  remise à zéro, adresse MAC. Aucun identifiant : l'horloge peut être offerte
+  telle quelle. Le bloc HTML est identique dans les deux croquis, seules les
+  constantes `WC_MEMO_*` en tête de fichier diffèrent.
+- **Numéro de version sur l'ESP8266** (`FIRMWARE_VERSION`, 18.1.0). Il n'y a pas
+  d'OTA sur cette cible : il sert au mémo et au tag git correspondant.
+
+### Corrigé
+- **Le mot de passe WiFi était exposé en clair dans la page de configuration.**
+  Le champ était pré-rempli avec `value='...'` ; `type='password'` ne masque que
+  l'affichage, la valeur restait lisible dans le code source de la page, visible
+  par quiconque sur le réseau local. Le champ n'est plus pré-rempli, et un champ
+  laissé vide conserve le mot de passe enregistré.
+- **`strncpy` sans terminaison garantie** sur `ssid` et `password` : une valeur de
+  31 caractères exactement laissait la chaîne non terminée.
+
 ## ESP32 — [2.0.1]
 
 Corrections seules. Aucun changement de structure : le diff avec la 2.0.0

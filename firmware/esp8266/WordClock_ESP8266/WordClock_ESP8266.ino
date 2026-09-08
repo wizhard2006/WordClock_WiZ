@@ -37,6 +37,30 @@
 #define EEPROM_SIZE       512
 #define DEFAULT_BRIGHTNESS  32
 
+// === VERSION DU FIRMWARE ===
+// Pas d'OTA sur ESP8266 : ce numéro sert uniquement au mémo de la WebUI et au
+// tag git correspondant. À incrémenter en même temps que le tag.
+#define WC_FW_VERSION_MAJOR 18
+#define WC_FW_VERSION_MINOR 1
+#define WC_FW_VERSION_PATCH 0
+#define STRINGIFY(x) #x
+#define TOSTRING(x) STRINGIFY(x)
+#define FIRMWARE_VERSION  "v" TOSTRING(WC_FW_VERSION_MAJOR) "." TOSTRING(WC_FW_VERSION_MINOR) "." TOSTRING(WC_FW_VERSION_PATCH) " (" __DATE__ " " __TIME__ ")"
+
+// --- Mémo affiché dans l'interface web ---------------------------------------
+// Sert à retrouver le projet dans plusieurs années, quand le seul souvenir qui
+// restera sera « cette horloge a une page web ». Aucune donnée personnelle et
+// aucun identifiant ici : l'horloge peut être offerte telle quelle.
+// Pour l'offrir : faire un Factory Reset (efface le WiFi enregistré) et vider
+// WC_MEMO_LOCAL ci-dessous.
+#define WC_MEMO_REPO     "https://github.com/wizhard2006/WordClock_WiZ"
+#define WC_MEMO_SKETCH   "firmware/esp8266/WordClock_ESP8266/WordClock_ESP8266.ino"
+#define WC_MEMO_BOARD    "LOLIN(WEMOS) D1 R2 & mini"
+#define WC_MEMO_PLATFORM "ESP8266"
+#define WC_MEMO_UPDATE   "par cable USB uniquement, depuis l'IDE Arduino"
+#define WC_MEMO_LOCAL    "Sources locales : SynologyDrive/Projet_Fab/WordClock/WordClock_WiZ"
+
+
 // === OBJETS GLOBAUX ===
 Adafruit_NeoPixel strip(NUM_LEDS, DEFAULT_LED_PIN, NEO_GRB + NEO_KHZ800);
 
@@ -296,7 +320,10 @@ void handleRoot(AsyncWebServerRequest *request) {
   html += "<h1>WordClock ESP8266</h1>";
   html += "<form action='/save' method='POST'>";
   html += "WiFi SSID: <input name='ssid' value='" + String(config.ssid) + "'><br>";
-  html += "WiFi Password: <input name='password' type='password' value='" + String(config.password) + "'><br>";
+  // Le mot de passe n'est PAS réinjecté dans la page : type='password' ne fait que
+  // masquer l'affichage, la valeur restait lisible en clair dans le code source de
+  // la page. Champ vide = mot de passe inchangé.
+  html += "WiFi Password: <input name='password' type='password' placeholder='(inchange si vide)'><br>";
   html += "NTP Server: <input name='ntpServer' value='" + String(config.ntpServer) + "'><br>";
   html += "LED Pin (GPIO): <input name='ledPin' type='number' min='0' max='16' value='" + String(config.ledPin) + "'><br>";
   html += "Brightness: <input name='brightness' type='number' min='1' max='255' value='" + String(config.brightness) + "'><br>";
@@ -319,12 +346,39 @@ void handleRoot(AsyncWebServerRequest *request) {
   html += "<b>WiFi Status:</b> " + String(wifiConnected ? "Connected" : "AP Config") + "<br>";
   html += "<b>IP Address:</b> " + myIP + "<br>";
   html += "<b>RSSI:</b> " + String(WiFi.RSSI()) + " dBm<br>";
+
+  // ----- Mémo : où retrouver ce projet dans cinq ans -----
+  html += "<hr><details><summary style='cursor:pointer;font-weight:bold'>Memo &mdash; ou retrouver ce projet</summary>";
+  html += "<div style='font-size:0.9em;line-height:1.6'>";
+  html += "<p>Horloge a mots francaise : 104 LED WS2812B en grille 8x13, cablees en serpentin, "
+          "derriere une lettrine imprimee en 3D.</p>";
+  html += "<b>Firmware</b> : " FIRMWARE_VERSION " &mdash; " WC_MEMO_PLATFORM "<br>";
+  html += "<b>Code source</b> : <a href='" WC_MEMO_REPO "'>" WC_MEMO_REPO "</a><br>";
+  html += "<b>Croquis a ouvrir</b> : " WC_MEMO_SKETCH "<br>";
+  html += "<b>Carte a selectionner dans l'IDE Arduino</b> : " WC_MEMO_BOARD "<br>";
+  html += "<b>Grille des lettres et mapping LED</b> : docs/LETTRINE.md, dans le depot<br>";
+  html += "<b>Marche a suivre complete</b> : README.md et COMMIT.md, dans le depot<br>";
+  html += "<b>Ruban</b> : donnees sur GPIO " + String(config.ledPin) + ", alimentation 5 V 4 A separee de l'USB<br>";
+  html += "<b>Mise a jour du firmware</b> : " WC_MEMO_UPDATE "<br>";
+  html += "<b>Adresse MAC</b> : " + WiFi.macAddress() + "<br>";
+  html += "<p><b>Tout reprendre a zero</b> : bouton Factory Reset ci-dessus. La carte redemarre "
+          "en point d'acces WiFi <b>WordClock_Config</b> : s'y connecter, puis ouvrir "
+          "<b>http://192.168.4.1</b></p>";
+  html += "<p><b>Avant d'offrir cette horloge</b> : faire un Factory Reset. Il efface le reseau "
+          "WiFi enregistre et son mot de passe.</p>";
+  if (strlen(WC_MEMO_LOCAL) > 0) html += "<p style='color:#888'>" WC_MEMO_LOCAL "</p>";
+  html += "</div></details>";
+
   html += "</body></html>";
   request->send(200, "text/html", html);
 }
 void handleSave(AsyncWebServerRequest *request) {
-  if (request->hasParam("ssid", true)) strncpy(config.ssid, request->getParam("ssid", true)->value().c_str(), 31);
-  if (request->hasParam("password", true)) strncpy(config.password, request->getParam("password", true)->value().c_str(), 31);
+  if (request->hasParam("ssid", true)) { strncpy(config.ssid, request->getParam("ssid", true)->value().c_str(), 31); config.ssid[31] = '\0'; }
+  // Champ vide = on garde le mot de passe enregistré (voir handleRoot).
+  if (request->hasParam("password", true) && request->getParam("password", true)->value().length() > 0) {
+    strncpy(config.password, request->getParam("password", true)->value().c_str(), 31);
+    config.password[31] = '\0';   // strncpy ne termine pas la chaîne si la source fait 31 caractères
+  }
   if (request->hasParam("ntpServer", true)) strncpy(config.ntpServer, request->getParam("ntpServer", true)->value().c_str(), 63);
   if (request->hasParam("brightness", true)) config.brightness = request->getParam("brightness", true)->value().toInt();
   if (request->hasParam("ledPin", true)) config.ledPin = request->getParam("ledPin", true)->value().toInt();
