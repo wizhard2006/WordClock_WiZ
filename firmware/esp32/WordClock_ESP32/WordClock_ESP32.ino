@@ -72,7 +72,7 @@
 // Version automatique (build date + option manuelle)
 #define WC_FW_VERSION_MAJOR 2
 #define WC_FW_VERSION_MINOR 0
-#define WC_FW_VERSION_PATCH 1
+#define WC_FW_VERSION_PATCH 2
 #define STRINGIFY(x) #x
 #define TOSTRING(x) STRINGIFY(x)
 #define FIRMWARE_VERSION  TOSTRING(WC_FW_VERSION_MAJOR) "." TOSTRING(WC_FW_VERSION_MINOR) "." TOSTRING(WC_FW_VERSION_PATCH) " (" __DATE__ " " __TIME__ ")"
